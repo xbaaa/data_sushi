@@ -44,6 +44,23 @@ jobs:
           cache: 'pip' # Caches dependencies to speed up future runs
       
       # ----------------------------------------------------------------
+      # 2.5. Debug - Check what was checked out
+      # ----------------------------------------------------------------
+      - name: Debug - List files
+        run: |
+          echo "=== Current directory ==="
+          pwd
+          echo ""
+          echo "=== Files in current directory ==="
+          ls -la
+          echo ""
+          echo "=== Looking for private-repo folder ==="
+          ls -la private-repo/ || echo "private-repo folder not found!"
+          echo ""
+          echo "=== All directories ==="
+          find . -maxdepth 2 -type d
+      
+      # ----------------------------------------------------------------
       # 3. Install Dependencies & Run Script
       # ----------------------------------------------------------------
       - name: Install Dependencies

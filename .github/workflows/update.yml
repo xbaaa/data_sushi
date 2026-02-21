@@ -48,16 +48,16 @@ jobs:
       # ----------------------------------------------------------------
       - name: Install Dependencies
         run: |
-          # The private repo has the scraper in sushiro_menu_scraper/ folder
-          pip install -r the_repo/sushiro_menu_scraper/requirements.txt
+          # The private repo has files directly in the root
+          pip install -r private-repo/requirements.txt
       
       - name: Run the Scraper
         run: |
-          # Run the script from inside the sushiro_menu_scraper folder
-          cd the_repo/sushiro_menu_scraper
+          # Run the script from the private-repo folder
+          cd private-repo
           python get_sushiro_menu.py
           # Move the generated JSON to the root of the public repo
-          mv menu_data.json ../../menu_data.json
+          mv menu_data.json ../menu_data.json
       
       # ----------------------------------------------------------------
       # 4. Commit & Push Data to "data" Branch (Orphan Strategy)

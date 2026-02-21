@@ -32,7 +32,7 @@ jobs:
         with:
           repository: ${{ secrets.SCRAPER_REPO_NAME }}
           token: ${{ secrets.SCRAPER_REPO_TOKEN }}
-          path: scraper # Clones the repo into a folder named 'scraper'
+          path: the_repo # Clones the repo into a folder named 'the_repo'
       
       # ----------------------------------------------------------------
       # 2. Setup Python Environment
@@ -48,17 +48,16 @@ jobs:
       # ----------------------------------------------------------------
       - name: Install Dependencies
         run: |
-          # Point to the requirements file INSIDE the 'scraper' folder
-          pip install -r scraper/sushiro_menu_scraper/requirements.txt
+          # The private repo has the scraper in sushiro_menu_scraper/ folder
+          pip install -r the_repo/sushiro_menu_scraper/requirements.txt
       
       - name: Run the Scraper
         run: |
-          # The script is inside 'scraper/sushiro_menu_scraper/get_sushiro_menu.py'
-          # It outputs menu_data.json into the CURRENT directory
-          cd scraper/sushiro_menu_scraper
+          # Run the script from inside the sushiro_menu_scraper folder
+          cd the_repo/sushiro_menu_scraper
           python get_sushiro_menu.py
           # Move the generated JSON to the root of the public repo
-          mv menu_data.json ../../../menu_data.json
+          mv menu_data.json ../../menu_data.json
       
       # ----------------------------------------------------------------
       # 4. Commit & Push Data to "data" Branch (Orphan Strategy)

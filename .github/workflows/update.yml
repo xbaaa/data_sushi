@@ -54,11 +54,8 @@ jobs:
           echo "=== Files in current directory ==="
           ls -la
           echo ""
-          echo "=== Looking for private-repo folder ==="
-          ls -la private-repo/ || echo "private-repo folder not found!"
-          echo ""
-          echo "=== All directories ==="
-          find . -maxdepth 2 -type d
+          echo "=== Files in the_repo ==="
+          ls -la the_repo/
       
       # ----------------------------------------------------------------
       # 3. Install Dependencies & Run Script
@@ -66,12 +63,12 @@ jobs:
       - name: Install Dependencies
         run: |
           # The private repo has files directly in the root
-          pip install -r private-repo/requirements.txt
+          pip install -r the_repo/requirements.txt
       
       - name: Run the Scraper
         run: |
-          # Run the script from the private-repo folder
-          cd private-repo
+          # Run the script from the the_repo folder
+          cd the_repo
           python get_sushiro_menu.py
           # Move the generated JSON to the root of the public repo
           mv menu_data.json ../menu_data.json

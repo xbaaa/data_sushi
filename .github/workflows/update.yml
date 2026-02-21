@@ -1,0 +1,117 @@
+name: Get Sushiro Menu
+
+on:
+  schedule:
+    # Runs daily at 2 AM HKT (6 PM UTC previous day)
+    - cron: '0 18 * * *'
+  workflow_dispatch: # Allows manual trigger
+
+permissions:
+  contents: write # Allows pushing data back to repo
+
+jobs:
+  scrape-and-publish:
+    runs-on: ubuntu-latest
+    
+    # Set timezone to Hong Kong
+    env:
+      TZ: 'Asia/Hong_Kong'
+    
+    steps:
+      # ----------------------------------------------------------------
+      # 0. Initialize Git (Checkout THIS Public Repo)
+      # ----------------------------------------------------------------
+      - name: Checkout Public Repo
+        uses: actions/checkout@v4
+      
+      # ----------------------------------------------------------------
+      # 1. Checkout Private Logic (Scraper Repo)
+      # ----------------------------------------------------------------
+      - name: Checkout Scraper Logic
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ secrets.SCRAPER_REPO_NAME }}
+          token: ${{ secrets.SCRAPER_REPO_TOKEN }}
+          path: scraper # Clones the repo into a folder named 'scraper'
+      
+      # ----------------------------------------------------------------
+      # 2. Setup Python Environment
+      # ----------------------------------------------------------------
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip' # Caches dependencies to speed up future runs
+      
+      # ----------------------------------------------------------------
+      # 3. Install Dependencies & Run Script
+      # ----------------------------------------------------------------
+      - name: Install Dependencies
+        run: |
+          # Point to the requirements file INSIDE the 'scraper' folder
+          pip install -r scraper/sushiro_menu_scraper/requirements.txt
+      
+      - name: Run the Scraper
+        run: |
+          # The script is inside 'scraper/sushiro_menu_scraper/get_sushiro_menu.py'
+          # It outputs menu_data.json into the CURRENT directory
+          cd scraper/sushiro_menu_scraper
+          python get_sushiro_menu.py
+          # Move the generated JSON to the root of the public repo
+          mv menu_data.json ../../../menu_data.json
+      
+      # ----------------------------------------------------------------
+      # 4. Commit & Push Data to "data" Branch (Orphan Strategy)
+      # ----------------------------------------------------------------
+      - name: Deploy Data
+        run: |
+          # Configure Git Identity
+          git config --global user.name "Sushiro Bot"
+          git config --global user.email "sushiro@mail.com"
+          
+          # Switch to an orphan branch named 'data'
+          # This creates a branch with NO history (prevents repo bloat)
+          git checkout --orphan data
+          
+          # Clear the staging area
+          git reset
+          
+          # Add ONLY the generated JSON file
+          git add menu_data.json
+          
+          # Check if there are changes before committing (avoids empty commit errors)
+          if git diff --staged --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          
+          # Commit with a timestamp
+          timestamp=$(date -u)
+          git commit -m "Update menu data: ${timestamp}"
+          
+          # Force Push to overwrite the 'data' branch completely
+          git push -f origin data
+      
+      # ----------------------------------------------------------------
+      # 5. Create Summary
+      # ----------------------------------------------------------------
+      - name: Summary
+        run: |
+          echo "## 🍣 Menu Scraping Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Timestamp:** $(date)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Parse JSON for stats
+          python -c "
+          import json
+          with open('menu_data.json', 'r', encoding='utf-8') as f:
+              data = json.load(f)
+          total_items = sum(len(cat['items']) for cat in data['categories'])
+          print(f'**Total Categories:** {len(data[\"categories\"])}')
+          print(f'**Total Items:** {total_items}')
+          print('')
+          print('### Categories:')
+          for cat in data['categories']:
+              print(f'- {cat[\"name\"]} ({cat[\"nameEn\"]}): {len(cat[\"items\"])} items')
+          " >> $GITHUB_STEP_SUMMARY

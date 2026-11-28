@@ -1,0 +1,81 @@
+{
+  "restaurant": "Sushiro Hong Kong",
+  "priceTiers": {
+    "12": {
+      "color": "#A70819",
+      "tier": "signature",
+      "name": "Signature Red"
+    },
+    "17": {
+      "color": "#C0C0C0",
+      "tier": "signature",
+      "name": "Signature Silver"
+    },
+    "22": {
+      "color": "#F2E8B5",
+      "tier": "signature",
+      "name": "Signature Yellow"
+    },
+    "27": {
+      "color": "#1E1E1E",
+      "tier": "signature",
+      "name": "Signature Black"
+    },
+    "8": {
+      "color": "#E8E8E8",
+      "tier": "standard",
+      "name": "Standard"
+    },
+    "10": {
+      "color": "#FFFFFF",
+      "tier": "standard",
+      "name": "Standard"
+    },
+    "13": {
+      "color": "#FF9E80",
+      "tier": "standard",
+      "name": "Standard"
+    },
+    "18": {
+      "color": "#80DEEA",
+      "tier": "standard",
+      "name": "Standard"
+    },
+    "19": {
+      "color": "#A5D6A7",
+      "tier": "standard",
+      "name": "Standard"
+    },
+    "20": {
+      "color": "#E8E8E8",
+      "tier": "standard",
+      "name": "Standard"
+    },
+    "28": {
+      "color": "#B39DDB",
+      "tier": "standard",
+      "name": "Standard"
+    },
+    "32": {
+      "color": "#E8E8E8",
+      "tier": "standard",
+      "name": "Standard"
+    },
+    "33": {
+      "color": "#EF9A9A",
+      "tier": "standard",
+      "name": "Standard"
+    },
+    "38": {
+      "color": "#F2B5E8",
+      "tier": "standard",
+      "name": "Standard"
+    },
+    "39": {
+      "color": "#C8E6C9",
+      "tier": "standard",
+      "name": "Standard"
+    }
+  },
+  "categories": []
+}
